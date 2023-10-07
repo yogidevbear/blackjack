@@ -43,9 +43,9 @@ export default class Deck {
       }
     }
 
-    function dealCard(hidden=false) {
+    function dealCard() {
       const { deck } = this
-      return {...deck.pop(), hidden:hidden}
+      return deck.pop()
     }
   }
 }

@@ -12,8 +12,10 @@ function App() {
   const [dealerHand, setDealerHand] = useState([])
   const [playerScores, setPlayerScores] = useState({})
   const [dealerScores, setDealerScores] = useState({})
+  const [winner, setWinner] = useState('')
 
   function startGame() {
+    setPlayer('player')
     setPlayerHand([])
     setDealerHand([])
     let tempDeck = new Deck()
@@ -21,27 +23,46 @@ function App() {
     let hand1 = [tempDeck.dealCard()]
     let hand2 = [tempDeck.dealCard()]
     hand1 = [...hand1,tempDeck.dealCard()]
-    hand2 = [...hand2,tempDeck.dealCard(true)]
+    hand2 = [...hand2,tempDeck.dealCard()]
     hand2[1].swapVisibility()
     setPlayerHand(playerHand => [...playerHand,...hand1])
     setDealerHand(dealerHand => [...dealerHand,...hand2])
     console.log('dealerHand',dealerHand)
     setDeck(tempDeck)
+    setWinner('')
+  }
+
+  function bestValidScore(scores) {
+    const validScores = Object.values(scores).filter(v => v < 22)
+    return Math.max(...validScores,0)
   }
 
   useEffect(
-    () => setPlayerScores(playerScores => calcHandScores(playerHand)),
+    () => {
+      setPlayerScores(playerScores => calcHandScores(playerHand))
+      if (playerHand.length === 5) {
+        setPlayer('dealer')
+      }
+    },
     [playerHand]
   )
 
   useEffect(
-    () => setDealerScores(dealerScores => calcHandScores(dealerHand)),
+    () => {
+      setDealerScores(dealerScores => calcHandScores(dealerHand))
+      // if (player === 'dealer' && Math.max(Object.values(dealerScores).filter(v => v < 22)) < 17) {
+      //   setDealerHand(dealerHand => [...dealerHand,deck.dealCard()])
+      // }
+    },
     [dealerHand]
   )
 
   useEffect(
     () => {
       console.log('playerScores',playerScores)
+      if (playerScores.minScore > 21) {
+        setWinner('Dealer')
+      }
     },
     [playerScores]
   )
@@ -49,6 +70,9 @@ function App() {
   useEffect(
     () => {
       console.log('dealerScores',dealerScores)
+      if (dealerScores.minScore > 21) {
+        setWinner('You')
+      }
     },
     [dealerScores]
   )
@@ -83,11 +107,16 @@ function App() {
     setPlayerHand(playerHand => [...playerHand,deck.dealCard()])
   }
 
-  const handleDealerHands = () => {
-    if (dealerScores.maxScore < 17) {
-      setDealerHand(dealerHand => [...dealerHand,deck.dealCard()])
-    }
-  }
+  // const handleDealerHands = () => {
+  //   console.log('inside handleDealerHands()')
+  //   if (bestValidScore(dealerScores) < 17) {
+  //     console.log('min not reached...')
+  //     setDealerHand(dealerHand => [...dealerHand,deck.dealCard()])
+  //     console.log('recall handleDealerHands()')
+  //     handleDealerHands()
+  //   }
+  //   (bestValidScore(dealerScores) > bestValidScore(playerScores)) ? setWinner('Dealer') : setWinner('You')
+  // }
 
   const handleHold = () => {
     // setDealerHand(dealerHand => [dealerHand[0],{...dealerHand[1],hidden:false}])
@@ -97,6 +126,16 @@ function App() {
     setDealerHand(dealerHand => showHand)
     setPlayer('dealer')
     // handleDealerHands() 
+  }
+
+  const displayScores = (scoresState) => {
+    if (scoresState.minScore !== scoresState.maxScore && scoresState.maxScore > 21)
+      return scoresState.minScore
+    let scores = `${scoresState.maxScore}`
+    if (scoresState.minScore !== scoresState.maxScore) {
+      scores += `(${scoresState.minScore})`
+    }
+    return scores
   }
 
   return (
@@ -113,17 +152,31 @@ function App() {
         }
       </div>
       <div id="App-center">
-        <h1>Blackjack &#9824;</h1>
-        {!playerHand.length &&
-          <button onClick={startGame}>Start game!</button>
+        {player === 'dealer' &&
+          <div>Dealer's score: {displayScores(dealerScores)}</div>
         }
-        {playerHand.length > 0 &&
-          <div>
-            <button onClick={handleDeal}>Hit</button>
-            <button onClick={handleHold}>Hold</button>
-            <p>Score: {playerScores.maxScore} {playerScores.minScore !== playerScores.maxScore && `(${playerScores.minScore})`}</p>
-          </div>
-        }
+        <h1>
+          Blackjack &#9824;
+          {winner &&
+            <span className="winner">{winner} wins!</span>
+          }
+        </h1>
+        <div>
+          {(!playerHand.length || winner) &&
+            <button onClick={startGame}>Start game!</button>
+          }
+          {(playerHand.length > 0 && !winner) &&
+            <span>
+              {player !== 'dealer' &&
+                <span>
+                  <button onClick={handleDeal}>Hit</button>
+                  <button onClick={handleHold}>Hold</button>
+                </span>
+              }
+              <span className="score">Your score: {displayScores(playerScores)}</span>
+            </span>
+          }
+        </div>
       </div>
       <div id="App-player">
         {playerHand.length > 0 &&
