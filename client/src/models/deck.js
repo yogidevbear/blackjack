@@ -25,13 +25,27 @@ export default class Deck {
     const faces = ["2","3","4","5","6","7","8","9","10","jack","queen","king","ace"]
     for (let suit of suits) {
       for (let face of faces) {
-        this.deck.push(new Card({face:face,suit:suit}))
+        const score = []
+        switch (face) {
+          case "ace":
+            score.push(1)
+            score.push(11)
+            break
+          case "king":
+          case "queen":
+          case "jack":
+            score.push(10)
+            break
+          default:
+            score.push(parseInt(face))
+        }
+        this.deck.push(new Card({face:face,suit:suit,score:score}))
       }
     }
 
-    function dealCard() {
+    function dealCard(hidden=false) {
       const { deck } = this
-      return deck.pop()
+      return {...deck.pop(), hidden:hidden}
     }
   }
 }
