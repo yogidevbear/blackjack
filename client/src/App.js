@@ -21,8 +21,6 @@ function App() {
     let hiddenCard = deck.dealCard()
     hiddenCard.swapVisibility()
     dealerHand.pickupCard(hiddenCard)
-    // console.log('playerHand.cards',playerHand.cards)
-    // console.log('dealerHand.cards',dealerHand.cards)
     renderDealerHand()
     renderPlayerHand()
     renderGameButtons()
@@ -36,7 +34,6 @@ function App() {
   }
 
   function renderCards(cards) {
-    // console.log('cards in hand',cards)
     return `<div class="hand">${cards.map((card) => renderCard(card)).join('')}</div>`
   }
 
@@ -71,9 +68,7 @@ function App() {
 
   const handleDeal = () => {
     const newCard = deck.dealCard()
-    // console.log('new card', newCard)
     playerHand.pickupCard(newCard)
-    // console.log('playerHand.cards',playerHand.cards)
     renderPlayerHand()
     renderPlayerScore()
     if (playerHand.isBust()) {

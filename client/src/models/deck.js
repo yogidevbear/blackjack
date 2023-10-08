@@ -36,7 +36,6 @@ export default class Deck {
 
     function refresh() {
       this.deck = populateDeck()
-      // console.log('deck refreshed:', this.deck)
     }
 
     function shuffle() {
@@ -55,7 +54,6 @@ export default class Deck {
     }
 
     function dealCard() {
-      // console.log('the deck before deal:', this.deck)
       return this.deck.pop()
     }
   }
