@@ -33,7 +33,7 @@ export default class Hand {
     }
 
     function isBust() {
-      return this.cards.length && this.bestValidScore() === 0
+      return this.cards.length > 0 && this.bestValidScore() === 0
     }
   }
 }
