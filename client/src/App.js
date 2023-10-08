@@ -1,81 +1,112 @@
-import { useState } from "react";
 import Deck from './models/deck'
+import Hand from "./models/hand";
 import './App.css';
-
-
 
 function App() {
   
-  // let deck
-  const [deck, setDeck] = useState()
-  const [playerHand, setPlayerHand] = useState([])
-  const [dealerHand, setDealerHand] = useState([])
-  // setPlayerHand(['quux'])
+  const deck = new Deck()
+  const playerHand = new Hand()
+  const dealerHand = new Hand()
 
   function startGame() {
-    setPlayerHand([])
-    setDealerHand([])
-    let tempDeck = new Deck()
-    tempDeck.shuffle()
-    let hand1 = [tempDeck.dealCard()]
-    let hand2 = [tempDeck.dealCard()]
-    hand1 = [...hand1,tempDeck.dealCard()]
-    hand2 = [...hand2,tempDeck.dealCard()]
-    // console.log('hand1',hand1,'hand2',hand2)
-    setPlayerHand(playerHand => [...playerHand,...hand1])
-    // console.log('playerHand',playerHand)
-    setDealerHand(dealerHand => [...dealerHand,...hand2])
-    // handleDeal()
-    // console.log('??',playerHand)
-    setDeck(tempDeck)
+    document.getElementById('winner').innerHTML = ''
+    document.getElementById('dealer-score').innerHTML = ''
+    playerHand.refresh()
+    dealerHand.refresh()
+    deck.refresh()
+    deck.shuffle()
+    playerHand.pickupCard(deck.dealCard())
+    dealerHand.pickupCard(deck.dealCard())
+    playerHand.pickupCard(deck.dealCard())
+    let hiddenCard = deck.dealCard()
+    hiddenCard.swapVisibility()
+    dealerHand.pickupCard(hiddenCard)
+    renderDealerHand()
+    renderPlayerHand()
+    renderGameButtons()
+    renderPlayerScore()
+  }
+
+  function renderCard(card) {
+    return card.visible ?
+      `<img src="/img/cards/${card.image}" alt="${card.face} of ${card.suit}" id="${card.face}_${card.suit}" />` :
+      `<img key="${card.face}_${card.suit}" src="/img/cards/back_blue.png" alt="Dealer hole card" />`
+  }
+
+  function renderCards(cards) {
+    return `<div class="hand">${cards.map((card) => renderCard(card)).join('')}</div>`
+  }
+
+  function renderDealerHand() {
+    document.getElementById('App-dealer').innerHTML = renderCards(dealerHand.cards)
+  }
+
+  function renderPlayerHand() {
+    document.getElementById('App-player').innerHTML = renderCards(playerHand.cards)
+  }
+
+  function renderGameButtons() {
+    document.getElementById('game-buttons').hidden = false
+    document.getElementById('start-game-button').hidden = true
+  }
+
+  function renderPlayerScore() {
+    const score = playerHand.isBust() ? 'Bust!' : playerHand.bestValidScore()
+    document.getElementById('player-score').innerHTML = `Your score: ${score}`
+  }
+
+  function renderDealerScore() {
+    const score = dealerHand.isBust() ? 'Bust!' : dealerHand.bestValidScore()
+    document.getElementById('dealer-score').innerHTML = `Dealer's score: ${score}`
+  }
+
+  function renderWinner() {
+    const dealerScore = dealerHand.bestValidScore()
+    const playerScore = playerHand.bestValidScore()
+    document.getElementById('winner').innerHTML = dealerScore === playerScore ? 'Draw' : dealerScore > playerScore ? 'Dealer wins!' : 'You win!'
   }
 
   const handleDeal = () => {
-    setPlayerHand(playerHand => [...playerHand,deck.dealCard()])
-    // console.log(deck.deck.length)
-    // console.log('playerHand',playerHand)
+    const newCard = deck.dealCard()
+    playerHand.pickupCard(newCard)
+    renderPlayerHand()
+    renderPlayerScore()
+    if (playerHand.isBust()) {
+      document.getElementById('game-buttons').hidden = true
+      document.getElementById('start-game-button').hidden = false
+    } else if (playerHand.cards.length === 5) {
+      handleStand()
+    }
   }
 
-  const handleHold = () => {
-    alert("x")
+  const handleStand = () => {
+    document.getElementById('game-buttons').hidden = true
+    dealerHand.cards[1].swapVisibility()
+    while (!dealerHand.isBust() && dealerHand.cards.length < 5 && dealerHand.bestValidScore() < 17) {
+      dealerHand.pickupCard(deck.dealCard())
+    }
+    renderDealerHand()
+    renderDealerScore()
+    renderWinner()
+    document.getElementById('start-game-button').hidden = false
   }
 
   return (
     <div className="App">
-      <div id="App-dealer">
-        {dealerHand.length > 0 &&
-          <div className="hand">
-            {/* {dealerHand.map((card,idx) => <img key={`${card.face}_${card.suit}`} src={`/img/cards/${card.image}`} alt={`${card.face} of ${card.suit}`} id={`${card.face}_${card.suit}`} />)} */}
-            <img key={`${dealerHand[0].face}_${dealerHand[0].suit}`} src={`/img/cards/${dealerHand[0].image}`} alt={`${dealerHand[0].face} of ${dealerHand[0].suit}`} id={`${dealerHand[0].face}_${dealerHand[0].suit}`} />
-            <img src="/img/cards/back_blue.png" alt="Dealer hole card" />
-          </div>
-        }
-      </div>
+      <div id="App-dealer"></div>
       <div id="App-center">
-        <h1>Blackjack &#9824;</h1>
-        {!playerHand.length &&
-          <button onClick={startGame}>Start game!</button>
-        }
-        {playerHand.length > 0 &&
-          <div>
+        <div id="dealer-score"></div>
+        <h1>Blackjack &#9824; <span id="winner"></span></h1>
+        <div>
+          <button id="start-game-button" onClick={startGame}>Start game!</button>
+          <span id="game-buttons" hidden={true}>
             <button onClick={handleDeal}>Hit</button>
-            <button onClick={handleHold}>Hold</button>
-          </div>
-        }
+            <button onClick={handleStand}>Stand</button>
+          </span>
+          <span id="player-score" className="score"></span>
+        </div>
       </div>
-      <div id="App-player">
-        {playerHand.length > 0 &&
-          <div className="hand">
-            {console.log('playerHand',playerHand)}
-            {playerHand.map((card,idx) => <img key={`${card.face}_${card.suit}`} src={`/img/cards/${card.image}`} alt={`${card.face} of ${card.suit}`} id={`${card.face}_${card.suit}`} />)}
-            {/* <img src={`/img/cards/${deck.deck[0].image}`} alt={`${deck.deck[0].face} of ${deck.deck[0].suit}`} id={`${deck.deck[0].face}_${deck.deck[0].suit}`} />
-            <img src={`/img/cards/${deck.deck[2].image}`} alt={`${deck.deck[0].face} of ${deck.deck[0].suit}`} id={`${deck.deck[0].face}_${deck.deck[0].suit}`} />
-            <img src={`/img/cards/${deck.deck[3].image}`} alt={`${deck.deck[0].face} of ${deck.deck[0].suit}`} id={`${deck.deck[0].face}_${deck.deck[0].suit}`} />
-            <img src={`/img/cards/${deck.deck[4].image}`} alt={`${deck.deck[0].face} of ${deck.deck[0].suit}`} id={`${deck.deck[0].face}_${deck.deck[0].suit}`} />
-            <img src={`/img/cards/${deck.deck[5].image}`} alt={`${deck.deck[0].face} of ${deck.deck[0].suit}`} id={`${deck.deck[0].face}_${deck.deck[0].suit}`} /> */}
-          </div>
-        }
-      </div>
+      <div id="App-player"></div>
     </div>
   );
 }
