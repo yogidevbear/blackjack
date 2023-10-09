@@ -1,6 +1,6 @@
 import Deck from './models/deck'
-import Hand from "./models/hand";
-import './App.css';
+import Hand from "./models/hand"
+import './App.css'
 
 function App() {
   
