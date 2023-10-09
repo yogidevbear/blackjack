@@ -26,7 +26,13 @@ Create a simple user interface (UI) for the game. The UI should allow the player
 
 ## Available Scripts
 
-In the project directory, you can run:
+In the project directory, you must run:
+
+### `npm install`
+
+This will ensure that all package dependencies needed to run, test and build the app are downloaded from the internet first.
+
+Once done, you can run any of the following commands:
 
 ### `npm start`
 
