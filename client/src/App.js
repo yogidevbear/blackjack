@@ -29,7 +29,7 @@ function App() {
 
   function renderCard(card) {
     return card.visible ?
-      `<img src="/img/cards/${card.image}" alt="${card.face} of ${card.suit}" id="${card.face}_${card.suit}" />` :
+      `<img src="/img/cards/${card.image}" alt="Card: ${card.face} of ${card.suit}" id="${card.face}_${card.suit}" />` :
       `<img key="${card.face}_${card.suit}" src="/img/cards/back_blue.png" alt="Dealer hole card" />`
   }
 
@@ -74,6 +74,7 @@ function App() {
     if (playerHand.isBust()) {
       document.getElementById('game-buttons').hidden = true
       document.getElementById('start-game-button').hidden = false
+      renderWinner()
     } else if (playerHand.cards.length === 5) {
       handleStand()
     }
