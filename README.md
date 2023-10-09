@@ -24,6 +24,40 @@ Create a simple user interface (UI) for the game. The UI should allow the player
 - Create clean and maintainable code focusing on object-oriented programming (OOP) principles.
 - Use proper code organisation and comments to make your code easy to understand.
 
+## How to Play
+
+Clone this repository to your local machine. You will need node and npm installed. Once clones, use your terminal and `cd` into the folder. Then run `npm install`. Once the dependencies have installed, run `npm start`. This will run the Blackjack app in development mode on port `3000` (unless you already have another app running locally on that port number). Open up [http://localhost:3000](http://localhost:3000) in your browser of choice.
+
+(Please read further below for other npm commands that you can run.)
+
+You will be presented with the opening screen:
+
+<img src="readme-files/blackjack-opening-screen.png" alt="Blackjack opening screen" width="400" />
+
+Click the `START GAME` button to start a new game. You will see a screen with the dealer's hand along the top and your hand along the bottom. You will also see your current best score from those cards, and two buttons: `HIT` to take another card, and `STAND` to keep your current hand and pass play over to the dealer.
+
+<img src="readme-files/game-started.png" alt="Game started" width="500" />
+
+If you draw a card (pressing `HIT`) and your score goes above 21, you will see your score saying "Bust!" and a message that the dealer has won.
+
+<img src="readme-files/bust.png" alt="Player bust" width="500" />
+
+If you draw a card and don't go over 21, you will see your new best score. You can draw another card or chose to "stand" (a.k.a. stop playing and keep your current hand).
+
+<img src="readme-files/card-draw.png" alt="Player draws card" width="500" />
+
+Clicking `STAND` will turn play over to the dealer who will draw one or more cards while their score totals 16 or less. Once the score goes above 16, the dealer will "stand" too (if they haven't gone bust).
+
+<img src="readme-files/dealer-plays.png" alt="Player draws card" width="500" />
+
+If you draw 5 cards and your score is still 21 or less, then the game will automatically place you in "stand" and continue with the dealer's turn.
+
+<img src="readme-files/five-card-draw.png" alt="Player draws card" width="500" />
+
+Once a game is complete, you can start a new game by clicking the `START GAME!` button.
+
+Happy playing!
+
 ## Available Scripts
 
 In the project directory, you must run:
