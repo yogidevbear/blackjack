@@ -39,6 +39,8 @@ Once done, you can run any of the following commands:
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
+To quit running the app, press `Ctrl`+`C`
+
 ### `npm test`
 
 Launches the test runner to run unit tests with Jest, as well as React testing-library Jest tests for the UI. 
@@ -53,7 +55,8 @@ Your app is ready to be deployed!
 
 You can check that the build works locally by starting a local Python server in the `/build/` directory.\
 For example: `cd build && python3 -m http.server`\
-Then open [http://localhost:8000](http://localhost:8000) in your browser
+Then open [http://localhost:8000](http://localhost:8000) in your browser\
+To quit running the Python server, press `Ctrl`+`C`
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
